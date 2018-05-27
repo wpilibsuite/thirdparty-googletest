@@ -1,0 +1,59 @@
+plugins {
+    id 'cpp'
+    id 'visual-studio'
+    id 'edu.wpi.first.NativeUtils' version '1.6.7'
+}
+
+repositories {
+    mavenCentral()
+}
+
+ext.licenseFile = file("$rootDir/LICENSE.txt")
+
+apply from: 'config.gradle'
+
+def outputsFolder = file("$buildDir/allOutputs")
+
+task copyAllOutputs(type: Copy) {
+    destinationDir outputsFolder
+}
+
+build.dependsOn copyAllOutputs
+
+ext.addTaskToCopyAllOutputs = { task ->
+    copyAllOutputs.dependsOn task
+    copyAllOutputs.inputs.file task.archivePath
+    copyAllOutputs.from task.archivePath
+}
+
+model {
+    components {
+        googletest(NativeLibrarySpec) {
+            sources {
+                cpp {
+                    source {
+                        srcDirs 'googletest/googletest/src', 'googletest/googlemock/src'
+                        exclude '**/*-all.cc', '**/*_main.cc'
+                    }
+                    exportedHeaders {
+                        srcDirs 'googletest/googletest/include', 'googletest/googlemock/include',
+                                'googletest/googletest', 'googletest/googlemock'
+                    }
+                }
+            }
+            binaries.all {
+                if (toolChain in VisualCpp) {
+                    cppCompiler.args '-D_UNICODE', '-DUNICODE', '-DWIN32',  '-D_WIN32', '-DSTRICT', '-DWIN32_LEAN_AND_MEAN', '-D_HAS_EXCEPTIONS=1'
+                } else {
+                    cppCompiler.args '-Wshadow', '-fexceptions', '-Wno-missing-field-initializers'
+                }
+            }
+        }
+    }
+}
+
+apply from: 'publish.gradle'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.7'
+}
