@@ -48,6 +48,9 @@ model {
                     cppCompiler.args '-Wshadow', '-fexceptions', '-Wno-missing-field-initializers'
                 }
             }
+            binaries.withType(SharedLibraryBinarySpec) {
+                buildable = false
+            }
         }
     }
 }
