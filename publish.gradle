@@ -16,8 +16,8 @@ def releaseNumber = 1
 def pubVersion = "1.8.0-$releaseNumber-4e4df22"
 
 def baseArtifactId = 'googletest'
-def artifactGroupId = 'edu.wpi.first.thirdparty.frc2018'
-def zipBaseName = '_GROUP_edu_wpi_first_thirdparty_frc2018_ID_googletest_CLS'
+def artifactGroupId = 'edu.wpi.first.thirdparty.frc2019'
+def zipBaseName = '_GROUP_edu_wpi_first_thirdparty_frc2019_ID_googletest_CLS'
 
 def outputsFolder = file("$project.buildDir/outputs")
 
