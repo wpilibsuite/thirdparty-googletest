@@ -1,30 +1,37 @@
 import edu.wpi.first.nativeutils.*
 import org.gradle.internal.os.OperatingSystem
 
-def windowsCompilerArgs = ['/EHsc', '/DNOMINMAX', '/Zi', '/FS', '/Zc:inline', '/MT']
-def windowsCCompilerArgs = ['/Zi', '/FS', '/Zc:inline', '/MT']
-def windowsReleaseCompilerArgs = ['/O2']
+def windowsCompilerArgs = ['/EHsc', '/DNOMINMAX', '/Zi', '/FS', '/Zc:inline', '/MP4']
+def windowsCCompilerArgs = ['/Zi', '/FS', '/Zc:inline']
+def windowsReleaseCompilerArgs = ['/O2', '/MD']
+def windowsDebugCompilerArgs = ['/Od', '/MDd']
 def windowsLinkerArgs = ['/DEBUG:FULL']
 def windowsReleaseLinkerArgs = ['/OPT:REF', '/OPT:ICF']
 
-def linuxCompilerArgs = ['-std=c++14', '-Wformat=2', '-Wall', '-Wextra', '-Werror', '-pedantic', '-Wno-psabi', '-g',
-                         '-D_LARGEFILE_SOURCE', '-D_FILE_OFFSET_BITS=64', '-D_GNU_SOURCE',
+def linuxCrossCompilerArgs = ['-std=c++14', '-Wformat=2', '-Wall', '-Wextra', '-Werror', '-pedantic', '-Wno-psabi', '-g',
                          '-Wno-unused-parameter', '-Wno-error=deprecated-declarations', '-fPIC', '-rdynamic',
                          '-pthread']
-def linuxCCompilerArgs = ['-g',
-                          '-D_LARGEFILE_SOURCE', '-D_FILE_OFFSET_BITS=64', '-D_GNU_SOURCE',
-                          '-fPIC', '-rdynamic', '-pthread']
+def linuxCrossCCompilerArgs = ['-Wformat=2', '-Wall', '-Wextra', '-Werror', '-pedantic', '-Wno-psabi', '-g',
+                          '-Wno-unused-parameter', '-fPIC', '-rdynamic', '-pthread']
+def linuxCrossLinkerArgs = ['-rdynamic', '-pthread', '-ldl']
+def linuxCrossReleaseCompilerArgs = ['-O2']
+def linuxCrossDebugCompilerArgs = ['-Og']
+
+def linuxCompilerArgs = ['-std=c++14', '-Wformat=2', '-Wall', '-Wextra', '-Werror', '-pedantic', '-Wno-psabi', '-g',
+                         '-Wno-unused-parameter', '-Wno-error=deprecated-declarations', '-fPIC', '-rdynamic',
+                         '-pthread']
+def linuxCCompilerArgs = ['-Wformat=2', '-Wall', '-Wextra', '-Werror', '-pedantic', '-Wno-psabi', '-g',
+                          '-Wno-unused-parameter', '-fPIC', '-rdynamic', '-pthread']
 def linuxLinkerArgs = ['-rdynamic', '-pthread', '-ldl']
-def linuxReleaseCompilerArgs = ['-Og']
+def linuxReleaseCompilerArgs = ['-O2']
 def linuxDebugCompilerArgs = ['-O0']
 def linux32BitArg = '-m32'
 
 def macCompilerArgs = ['-std=c++14', '-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fPIC', '-g',
-                       '-D_DARWIN_USE_64_BIT_INODE=1', '-D_DARWIN_UNLIMITED_SELECT=1',
                        '-Wno-unused-parameter', '-Wno-error=deprecated-declarations', '-Wno-missing-field-initializers',
                        '-Wno-unused-private-field', '-Wno-unused-const-variable', '-pthread']
-def macCCompilerArgs = ['-fPIC', '-g',
-                        '-D_DARWIN_USE_64_BIT_INODE=1', '-D_DARWIN_UNLIMITED_SELECT=1']
+def macCCompilerArgs = ['-Wall', '-Wextra', '-Werror', '-pedantic-errors', '-fPIC', '-g',
+                        '-Wno-unused-parameter', '-Wno-missing-field-initializers', '-Wno-unused-private-field']
 def macObjCLinkerArgs = ['-std=c++14', '-stdlib=libc++','-fobjc-arc', '-g', '-fPIC', '-Wall', '-Wextra', '-Werror']
 def macReleaseCompilerArgs = ['-O2']
 def macDebugCompilerArgs = ['-O0']
@@ -108,12 +115,13 @@ if (!project.hasProperty('skipAthena')) {
                 architecture = 'athena'
                 operatingSystem = 'linux'
                 toolChainPrefix = 'arm-frc2019-linux-gnueabi-'
-                compilerArgs = linuxCompilerArgs
-                CCompilerArgs = linuxCCompilerArgs
-                linkerArgs = linuxLinkerArgs
-                debugCompilerArgs = linuxDebugCompilerArgs
-                releaseCompilerArgs = linuxReleaseCompilerArgs
+                compilerArgs = linuxCrossCompilerArgs
+                CCompilerArgs = linuxCrossCCompilerArgs
+                linkerArgs = linuxCrossLinkerArgs
+                debugCompilerArgs = linuxCrossDebugCompilerArgs
+                releaseCompilerArgs = linuxCrossReleaseCompilerArgs
                 releaseStripBinaries = true
+                debugStripBinaries = true
                 compilerFamily = 'Gcc'
             }
         }
@@ -131,6 +139,7 @@ if (!project.hasProperty('onlyAthena')) {
                 linkerArgs = windowsLinkerArgs
                 releaseCompilerArgs = windowsReleaseCompilerArgs
                 releaseLinkerArgs = windowsReleaseLinkerArgs
+                debugCompilerArgs = windowsDebugCompilerArgs
                 compilerFamily = 'VisualCpp'
                 detectPlatform = windows32PlatformDetect
             }
@@ -142,6 +151,7 @@ if (!project.hasProperty('onlyAthena')) {
                 linkerArgs = windowsLinkerArgs
                 releaseCompilerArgs = windowsReleaseCompilerArgs
                 releaseLinkerArgs = windowsReleaseLinkerArgs
+                debugCompilerArgs = windowsDebugCompilerArgs
                 compilerFamily = 'VisualCpp'
                 detectPlatform = windows64PlatformDetect
             }
@@ -154,6 +164,7 @@ if (!project.hasProperty('onlyAthena')) {
                 debugCompilerArgs = linuxDebugCompilerArgs
                 releaseCompilerArgs = linuxReleaseCompilerArgs
                 releaseStripBinaries = true
+                debugStripBinaries = true
                 compilerFamily = 'Gcc'
                 detectPlatform = linux64IntelPlatformDetect
             }
@@ -166,9 +177,21 @@ if (!project.hasProperty('onlyAthena')) {
                 releaseCompilerArgs = macReleaseCompilerArgs
                 objCppCompilerArgs = macObjCLinkerArgs
                 linkerArgs = macLinkerArgs
-                releaseStripBinaries = true
                 compilerFamily = 'Clang'
                 detectPlatform = mac64PlatformDetect
+            }
+            raspbian(CrossBuildConfig) {
+                architecture = 'raspbian'
+                operatingSystem = 'linux'
+                toolChainPrefix = 'arm-raspbian9-linux-gnueabihf-'
+                compilerArgs = linuxCrossCompilerArgs
+                CCompilerArgs = linuxCrossCCompilerArgs
+                linkerArgs = linuxCrossLinkerArgs
+                debugCompilerArgs = linuxCrossDebugCompilerArgs
+                releaseCompilerArgs = linuxCrossReleaseCompilerArgs
+                releaseStripBinaries = true
+                debugStripBinaries = true
+                compilerFamily = 'Gcc'
             }
         }
     }
@@ -187,6 +210,7 @@ if (project.hasProperty('linuxCross')) {
                 debugCompilerArgs = linuxDebugCompilerArgs
                 releaseCompilerArgs = linuxReleaseCompilerArgs
                 releaseStripBinaries = true
+                debugStripBinaries = true
                 skipByDefault = true
                 compilerFamily = 'Gcc'
             }
@@ -204,6 +228,7 @@ if (project.hasProperty('linuxCross')) {
                 debugCompilerArgs = linuxDebugCompilerArgs
                 releaseCompilerArgs = linuxReleaseCompilerArgs
                 releaseStripBinaries = true
+                debugStripBinaries = true
                 compilerFamily = 'Gcc'
                 detectPlatform = linuxArmPlatformDetect
             }
@@ -219,17 +244,64 @@ ext.getPlatformPath = { binary ->
     return NativeUtils.getPlatformPath(binary)
 }
 
+ext.createComponentZipTasksDebug = { components, name, base, type, project, func ->
+    def configMap = [:]
+    components.each {
+        if (it in NativeLibrarySpec && it.name == name) {
+            it.binaries.each {
+                if (it.buildType.name == "debug") {
+                    def target = getClassifier(it)
+                    if (configMap.containsKey(target)) {
+                        configMap.get(target).add(it)
+                    } else {
+                        configMap.put(target, [])
+                        configMap.get(target).add(it)
+                    }
+                }
+            }
+        }
+    }
+    def taskList = []
+    def outputsFolder = file("$project.buildDir/outputs")
+    configMap.each { key, value ->
+        def task = project.tasks.create(base + "-${key}-debug", type) {
+            description = 'Creates component archive for platform ' + key
+            destinationDir = outputsFolder
+            classifier = key
+            baseName = '_M_' + base
+            duplicatesStrategy = 'exclude'
+
+            from(licenseFile) {
+                into '/'
+            }
+
+            func(it, value)
+        }
+        taskList.add(task)
+
+        project.build.dependsOn task
+
+        project.artifacts {
+            task
+        }
+        addTaskToCopyAllOutputs(task)
+    }
+    return taskList
+}
+
 ext.createComponentZipTasks = { components, name, base, type, project, func ->
     def configMap = [:]
     components.each {
         if (it in NativeLibrarySpec && it.name == name) {
             it.binaries.each {
-                def target = getClassifier(it)
-                if (configMap.containsKey(target)) {
-                    configMap.get(target).add(it)
-                } else {
-                    configMap.put(target, [])
-                    configMap.get(target).add(it)
+                if (it.buildType.name == "release") {
+                    def target = getClassifier(it)
+                    if (configMap.containsKey(target)) {
+                        configMap.get(target).add(it)
+                    } else {
+                        configMap.put(target, [])
+                        configMap.get(target).add(it)
+                    }
                 }
             }
         }
@@ -272,9 +344,32 @@ ext.createAllCombined = { list, name, base, type, project ->
         duplicatesStrategy = 'exclude'
 
         list.each {
-            it.outputs.files.each {
-                from project.zipTree(it)
-            }
+            from project.zipTree(it.archivePath)
+            dependsOn it
+        }
+    }
+
+    project.build.dependsOn task
+
+    project.artifacts {
+        task
+    }
+
+    return task
+
+}
+
+ext.createAllCombinedDebug = { list, name, base, type, project ->
+    def outputsFolder = file("$project.buildDir/outputs")
+    def task = project.tasks.create(base + '-all-debug', type) {
+        description = 'Creates component archive for all classifiers'
+        destinationDir = outputsFolder
+        classifier = 'alldebug'
+        baseName = base
+        duplicatesStrategy = 'exclude'
+
+        list.each {
+            from project.zipTree(it.archivePath)
             dependsOn it
         }
     }
@@ -293,8 +388,14 @@ ext.includeStandardZipFormat = { task, value ->
     value.each { binary ->
         if (binary.buildable) {
             if (binary instanceof SharedLibraryBinarySpec) {
-                task.dependsOn binary.buildTask
+                task.dependsOn binary.tasks.link
                 task.from(new File(binary.sharedLibraryFile.absolutePath + ".debug")) {
+                    into getPlatformPath(binary) + '/shared'
+                }
+                def sharedPath = binary.sharedLibraryFile.absolutePath
+                sharedPath = sharedPath.substring(0, sharedPath.length() - 4)
+
+                task.from(new File(sharedPath + '.pdb')) {
                     into getPlatformPath(binary) + '/shared'
                 }
                 task.from(binary.sharedLibraryFile) {
@@ -304,7 +405,7 @@ ext.includeStandardZipFormat = { task, value ->
                     into getPlatformPath(binary) + '/shared'
                 }
             } else if (binary instanceof StaticLibraryBinarySpec) {
-                task.dependsOn binary.buildTask
+                task.dependsOn binary.tasks.createStaticLib
                 task.from(binary.staticLibraryFile) {
                     into getPlatformPath(binary) + '/static'
                 }

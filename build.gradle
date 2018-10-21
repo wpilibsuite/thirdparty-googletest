@@ -1,7 +1,7 @@
 plugins {
     id 'cpp'
     id 'visual-studio'
-    id 'edu.wpi.first.NativeUtils' version '1.6.7'
+    id 'edu.wpi.first.NativeUtils' version '1.8.0'
 }
 
 repositories {

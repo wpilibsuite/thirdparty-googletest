@@ -11,7 +11,7 @@ publishing {
     }
 }
 
-def releaseNumber = 1
+def releaseNumber = 2
 
 def pubVersion = "1.8.0-$releaseNumber-4e4df22"
 
@@ -97,13 +97,23 @@ model {
             allTask = createAllCombined(GtTaskList, 'googletest', zipBaseName, Zip, project)
         }
 
+        def GtTaskListDebug = createComponentZipTasksDebug($.components, 'googletest', zipBaseName, Zip, project, includeStandardZipFormat)
+        def allTaskDebug
+        if (!project.hasProperty('jenkinsBuild')) {
+            allTaskDebug = createAllCombinedDebug(GtTaskList, 'googletest', zipBaseName, Zip, project)
+        }
+
         publications {
             cpp(MavenPublication) {
                 GtTaskList.each {
                     artifact it
                 }
+                GtTaskListDebug.each {
+                    artifact it
+                }
                 if (!project.hasProperty('jenkinsBuild')) {
                     artifact allTask
+                    artifact allTaskDebug
                 }
                 artifact cppHeadersZip
                 artifact cppSourcesZip
