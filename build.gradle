@@ -4,7 +4,7 @@ plugins {
     id 'edu.wpi.first.NativeUtils' version '1.8.0'
 }
 
-println System.getenv('HOME')
+println System.getenv('PATH')
 
 repositories {
     mavenCentral()
