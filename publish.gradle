@@ -11,7 +11,7 @@ publishing {
     }
 }
 
-def releaseNumber = 2
+def releaseNumber = 3
 
 def pubVersion = "1.8.0-$releaseNumber-4e4df22"
 
@@ -91,29 +91,11 @@ addTaskToCopyAllOutputs(cppSourcesZip)
 
 model {
     publishing {
-        def GtTaskList = createComponentZipTasks($.components, 'googletest', zipBaseName, Zip, project, includeStandardZipFormat)
-        def allTask
-        if (!project.hasProperty('jenkinsBuild')) {
-            allTask = createAllCombined(GtTaskList, 'googletest', zipBaseName, Zip, project)
-        }
-
-        def GtTaskListDebug = createComponentZipTasksDebug($.components, 'googletest', zipBaseName, Zip, project, includeStandardZipFormat)
-        def allTaskDebug
-        if (!project.hasProperty('jenkinsBuild')) {
-            allTaskDebug = createAllCombinedDebug(GtTaskList, 'googletest', zipBaseName, Zip, project)
-        }
-
+        def gTaskList = createComponentZipTasks($.components, 'googletest', zipBaseName, Zip, project, includeStandardZipFormat)
         publications {
             cpp(MavenPublication) {
-                GtTaskList.each {
+                gTaskList.each {
                     artifact it
-                }
-                GtTaskListDebug.each {
-                    artifact it
-                }
-                if (!project.hasProperty('jenkinsBuild')) {
-                    artifact allTask
-                    artifact allTaskDebug
                 }
                 artifact cppHeadersZip
                 artifact cppSourcesZip
