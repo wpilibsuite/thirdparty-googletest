@@ -51,6 +51,7 @@ model {
             binaries.withType(SharedLibraryBinarySpec) {
                 buildable = false
             }
+            appendDebugPathToBinaries(binaries)
         }
     }
 }
