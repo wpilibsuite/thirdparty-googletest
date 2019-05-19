@@ -11,9 +11,9 @@ publishing {
     }
 }
 
-def releaseNumber = 5
+def releaseNumber = 1
 
-def pubVersion = "1.8.0-$releaseNumber-4e4df22"
+def pubVersion = "1.8.1-$releaseNumber-f71fb4f"
 
 def baseArtifactId = 'googletest'
 def artifactGroupId = 'edu.wpi.first.thirdparty.frc2019'

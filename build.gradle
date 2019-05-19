@@ -58,6 +58,6 @@ model {
 
 apply from: 'publish.gradle'
 
-task wrapper(type: Wrapper) {
+wrapper {
     gradleVersion = '5.0'
 }
