@@ -108,7 +108,7 @@ def mac32PlatformDetect = {
     }
 }
 
-if (!project.hasProperty('skipAthena')) {
+if (!project.hasProperty('skipAthena') && !project.hasProperty('onlyRaspbian')) {
     model {
         buildConfigs {
             roboRio(CrossBuildConfig) {
@@ -127,7 +127,26 @@ if (!project.hasProperty('skipAthena')) {
     }
 }
 
-if (!project.hasProperty('onlyAthena')) {
+if (!project.hasProperty('skipRaspbian') && !project.hasProperty('onlyAthena')) {
+    model {
+        buildConfigs {
+            raspbian(CrossBuildConfig) {
+                architecture = 'raspbian'
+                operatingSystem = 'linux'
+                toolChainPrefix = 'arm-raspbian9-linux-gnueabihf-'
+                compilerArgs = linuxCrossCompilerArgs
+                CCompilerArgs = linuxCrossCCompilerArgs
+                linkerArgs = linuxCrossLinkerArgs
+                debugCompilerArgs = linuxCrossDebugCompilerArgs
+                releaseCompilerArgs = linuxCrossReleaseCompilerArgs
+                stripBuildTypes = ['debug', 'release']
+                compilerFamily = 'Gcc'
+            }
+        }
+    }
+}
+
+if (!project.hasProperty('onlyAthena') && !hasProperty('onlyRaspbian')) {
     model {
         buildConfigs {
             winX86(BuildConfig) {
@@ -177,18 +196,6 @@ if (!project.hasProperty('onlyAthena')) {
                 linkerArgs = macLinkerArgs
                 compilerFamily = 'Clang'
                 detectPlatform = mac64PlatformDetect
-            }
-            raspbian(CrossBuildConfig) {
-                architecture = 'raspbian'
-                operatingSystem = 'linux'
-                toolChainPrefix = 'arm-raspbian9-linux-gnueabihf-'
-                compilerArgs = linuxCrossCompilerArgs
-                CCompilerArgs = linuxCrossCCompilerArgs
-                linkerArgs = linuxCrossLinkerArgs
-                debugCompilerArgs = linuxCrossDebugCompilerArgs
-                releaseCompilerArgs = linuxCrossReleaseCompilerArgs
-                stripBuildTypes = ['debug', 'release']
-                compilerFamily = 'Gcc'
             }
         }
     }
@@ -273,10 +280,11 @@ ext.appendDebugPathToBinaries = { binaries->
     }
 }
 
-ext.createComponentZipTasks = { components, name, base, type, project, func ->
+ext.createComponentZipTasks = { components, names, base, type, project, func ->
+    def stringNames = names.collect {it.toString()}
     def configMap = [:]
     components.each {
-        if (it in NativeLibrarySpec && it.name == name) {
+        if (it in NativeLibrarySpec && stringNames.contains(it.name)) {
             it.binaries.each {
                 if (!it.buildable) return
                 def target = getPublishClassifier(it)
@@ -320,17 +328,16 @@ ext.createComponentZipTasks = { components, name, base, type, project, func ->
 ext.createAllCombined = { list, name, base, type, project ->
     def outputsFolder = file("$project.buildDir/outputs")
 
-    def task = project.tasks.create(base + "-all${extraclassifier}", type) {
-        description = "Creates component archive for all ${extraclassifier} classifiers"
+    def task = project.tasks.create(base + "-all", type) {
+        description = "Creates component archive for all classifiers"
         destinationDir = outputsFolder
-        classifier = "all${extraclassifier}"
+        classifier = "all"
         baseName = base
         duplicatesStrategy = 'exclude'
 
         list.each {
-            it.outputs.files.each {
-                from project.zipTree(it)
-            }
+            if (it.name.endsWith('debug')) return
+            from project.zipTree(it.archivePath)
             dependsOn it
         }
     }
