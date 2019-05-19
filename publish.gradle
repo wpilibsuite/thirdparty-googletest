@@ -91,7 +91,7 @@ addTaskToCopyAllOutputs(cppSourcesZip)
 
 model {
     publishing {
-        def gTaskList = createComponentZipTasks($.components, 'googletest', zipBaseName, Zip, project, includeStandardZipFormat)
+        def gTaskList = createComponentZipTasks($.components, ['googletest'], zipBaseName, Zip, project, includeStandardZipFormat)
         publications {
             cpp(MavenPublication) {
                 gTaskList.each {
