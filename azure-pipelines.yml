@@ -72,31 +72,31 @@ stages:
           artifactName: 'Raspbian'
           targetPath: 'build/allOutputs'
 
-  - job: Linux_Bionic
-    pool:
-      vmImage: 'Ubuntu 16.04'
+  # - job: Linux_Bionic
+  #   pool:
+  #     vmImage: 'Ubuntu 16.04'
 
-    container: bionic
+  #   container: bionic
 
-    steps:
-      - checkout: self
-        submodules: true
-      - task: Gradle@2
-        inputs:
-          workingDirectory: ''
-          gradleWrapperFile: 'gradlew'
-          gradleOptions: '-Xmx3072m'
-          publishJUnitResults: true
-          testResultsFiles: '**/TEST-*.xml'
-          tasks: 'build'
-          options: '-Ponlylinuxaarch64bionic'
-          # checkStyleRunAnalysis: true
-          # pmdRunAnalysis: true
+  #   steps:
+  #     - checkout: self
+  #       submodules: true
+  #     - task: Gradle@2
+  #       inputs:
+  #         workingDirectory: ''
+  #         gradleWrapperFile: 'gradlew'
+  #         gradleOptions: '-Xmx3072m'
+  #         publishJUnitResults: true
+  #         testResultsFiles: '**/TEST-*.xml'
+  #         tasks: 'build'
+  #         options: '-Ponlylinuxaarch64bionic'
+  #         # checkStyleRunAnalysis: true
+  #         # pmdRunAnalysis: true
 
-      - task: PublishPipelineArtifact@0
-        inputs:
-          artifactName: 'Bionic'
-          targetPath: 'build/allOutputs'
+  #     - task: PublishPipelineArtifact@0
+  #       inputs:
+  #         artifactName: 'Bionic'
+  #         targetPath: 'build/allOutputs'
 
   - job: Linux
     pool:
