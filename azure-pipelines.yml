@@ -6,10 +6,6 @@
 trigger:
 - master
 
-steps:
-- checkout: self
-  submodules: true
-
 resources:
   containers:
   - container: wpilib2020
@@ -31,6 +27,8 @@ stages:
     container: wpilib2020
 
     steps:
+      - checkout: self
+        submodules: true
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -55,6 +53,8 @@ stages:
     container: raspbian
 
     steps:
+      - checkout: self
+        submodules: true
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -79,6 +79,8 @@ stages:
     container: bionic
 
     steps:
+      - checkout: self
+        submodules: true
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -103,6 +105,8 @@ stages:
     container: ubuntu
 
     steps:
+      - checkout: self
+        submodules: true
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -123,6 +127,8 @@ stages:
     pool:
       vmImage: 'windows-2019'
     steps:
+      - checkout: self
+        submodules: true
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -145,6 +151,8 @@ stages:
     pool:
       vmImage: 'windows-2019'
     steps:
+      - checkout: self
+        submodules: true
       - powershell: |
           mkdir build
           $ProgressPreference = 'SilentlyContinue'
@@ -176,6 +184,8 @@ stages:
     pool:
       vmImage: 'macOS-10.14'
     steps:
+      - checkout: self
+        submodules: true
       - script: |
           mkdir build
           export JAVA_HOME=`/usr/libexec/java_home -v 11`
