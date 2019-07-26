@@ -13,7 +13,7 @@ publishing {
 
 def releaseNumber = 1
 
-def pubVersion = "1.8.1-$releaseNumber-f71fb4f"
+def pubVersion = "1.9.0-$releaseNumber-437e100"
 
 def baseArtifactId = 'googletest'
 def artifactGroupId = 'edu.wpi.first.thirdparty.frc2019'
