@@ -27,6 +27,8 @@ stages:
     container: wpilib2020
 
     steps:
+      - checkout: self
+        submodules: true
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -51,6 +53,8 @@ stages:
     container: raspbian
 
     steps:
+      - checkout: self
+        submodules: true
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -68,6 +72,32 @@ stages:
           artifactName: 'Raspbian'
           targetPath: 'build/allOutputs'
 
+  # - job: Linux_Bionic
+  #   pool:
+  #     vmImage: 'Ubuntu 16.04'
+
+  #   container: bionic
+
+  #   steps:
+  #     - checkout: self
+  #       submodules: true
+  #     - task: Gradle@2
+  #       inputs:
+  #         workingDirectory: ''
+  #         gradleWrapperFile: 'gradlew'
+  #         gradleOptions: '-Xmx3072m'
+  #         publishJUnitResults: true
+  #         testResultsFiles: '**/TEST-*.xml'
+  #         tasks: 'build'
+  #         options: '-Ponlylinuxaarch64bionic'
+  #         # checkStyleRunAnalysis: true
+  #         # pmdRunAnalysis: true
+
+  #     - task: PublishPipelineArtifact@0
+  #       inputs:
+  #         artifactName: 'Bionic'
+  #         targetPath: 'build/allOutputs'
+
   - job: Linux
     pool:
       vmImage: 'Ubuntu 16.04'
@@ -75,6 +105,8 @@ stages:
     container: ubuntu
 
     steps:
+      - checkout: self
+        submodules: true
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -95,6 +127,8 @@ stages:
     pool:
       vmImage: 'windows-2019'
     steps:
+      - checkout: self
+        submodules: true
       - task: Gradle@2
         inputs:
           workingDirectory: ''
@@ -117,6 +151,8 @@ stages:
     pool:
       vmImage: 'windows-2019'
     steps:
+      - checkout: self
+        submodules: true
       - powershell: |
           mkdir build
           $ProgressPreference = 'SilentlyContinue'
@@ -148,6 +184,8 @@ stages:
     pool:
       vmImage: 'macOS-10.14'
     steps:
+      - checkout: self
+        submodules: true
       - script: |
           mkdir build
           export JAVA_HOME=`/usr/libexec/java_home -v 11`
@@ -172,3 +210,53 @@ stages:
         inputs:
           artifactName: 'Mac'
           targetPath: 'build/allOutputs'
+
+- stage: Combine
+  jobs:
+  - job: CombineJob
+    pool:
+      vmImage: 'macOS-10.14'
+
+    steps:
+    - checkout: none
+    - script: |
+        git clone https://github.com/wpilibsuite/build-tools
+      displayName: 'Clone Combiner'
+    - task: DownloadPipelineArtifact@0
+      inputs:
+        artifactName: 'Mac'
+        targetPath: 'build-tools/combiner/products/build/allOutputs'
+    - task: DownloadPipelineArtifact@0
+      inputs:
+        artifactName: 'Win32'
+        targetPath: 'build-tools/combiner/products/build/allOutputs'
+    - task: DownloadPipelineArtifact@0
+      inputs:
+        artifactName: 'Win64'
+        targetPath: 'build-tools/combiner/products/build/allOutputs'
+    - task: DownloadPipelineArtifact@0
+      inputs:
+        artifactName: 'Linux'
+        targetPath: 'build-tools/combiner/products/build/allOutputs'
+    - task: DownloadPipelineArtifact@0
+      inputs:
+        artifactName: 'Raspbian'
+        targetPath: 'build-tools/combiner/products/build/allOutputs'
+    - task: DownloadPipelineArtifact@0
+      inputs:
+        artifactName: 'Athena'
+        targetPath: 'build-tools/combiner/products/build/allOutputs'
+    - task: Gradle@2
+      inputs:
+        workingDirectory: 'build-tools/combiner'
+        gradleWrapperFile: 'build-tools/combiner/gradlew'
+        gradleOptions: '-Xmx3072m'
+        tasks: 'publish '
+        options: '-Pthirdparty'
+    - script: |
+        echo "##vso[task.setvariable variable=UserHome]$HOME"
+      displayName: 'Set Home Variable'
+    - task: PublishPipelineArtifact@0
+      inputs:
+        artifactName: 'Maven'
+        targetPath: $(UserHome)/releases
