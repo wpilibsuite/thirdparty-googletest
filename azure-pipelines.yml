@@ -223,7 +223,7 @@ stages:
     steps:
     - checkout: none
     - script: |
-        git clone https://github.com/wpilibsuite/build-tools
+        git clone https://github.com/thadhouse/build-tools
       displayName: 'Clone Combiner'
     - task: DownloadPipelineArtifact@0
       inputs:
