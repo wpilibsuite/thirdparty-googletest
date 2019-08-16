@@ -7,7 +7,7 @@ trigger:
 - master
 
 variables:
-- group: ARTIFACTORY_PUBLISH_PASSWORD
+- group: Artifactory-Package-Publish
 
 resources:
   containers:
