@@ -7,7 +7,7 @@ trigger:
 - master
 
 variables:
-- group: Github-Package-Publish
+- group: ARTIFACTORY_PUBLISH_PASSWORD
 
 resources:
   containers:
@@ -262,8 +262,8 @@ stages:
         tasks: 'publish '
         options: '-Pthirdparty'
       env:
-        MAVEN_PUBLISH_USER_NAME: $(MavenPublishUserName)
-        MAVEN_PUBLISH_PASSWORD: $(MavenPublishPassword)
+        ARTIFACTORY_PUBLISH_USERNAME: $(PublishUserName)
+        ARTIFACTORY_PUBLISH_PASSWORD: $(PublishPassword)
     - script: |
         echo "##vso[task.setvariable variable=UserHome]$HOME"
       displayName: 'Set Home Variable'
