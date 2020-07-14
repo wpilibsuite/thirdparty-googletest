@@ -145,6 +145,9 @@ ext.includeStandardZipFormat = { task, value ->
                     include '*.pdb'
                     into nativeUtils.getPlatformPath(binary) + '/static'
                 }
+                task.from(new File(pdbDir, 'SourceLink.json')) {
+                    into nativeUtils.getPlatformPath(binary) + '/static'
+                }
             }
         }
     }
