@@ -11,7 +11,7 @@ publishing {
     }
 }
 
-def releaseNumber = 4
+def releaseNumber = 5
 
 def pubVersion = "1.9.0-$releaseNumber-437e100-1"
 
@@ -44,8 +44,8 @@ copyAllOutputs.inputs.file versionFile
 copyAllOutputs.from versionFile
 
 task cppSourcesZip(type: Zip) {
-    destinationDir = outputsFolder
-    baseName = zipBaseName
+    destinationDirectory = outputsFolder
+    archiveBaseName = zipBaseName
     classifier = "sources"
 
     from(licenseFile) {
@@ -66,8 +66,8 @@ task cppSourcesZip(type: Zip) {
 }
 
 task cppHeadersZip(type: Zip) {
-    destinationDir = outputsFolder
-    baseName = zipBaseName
+    destinationDirectory = outputsFolder
+    archiveBaseName = zipBaseName
     classifier = "headers"
 
     from(licenseFile) {
