@@ -11,8 +11,8 @@ variables:
 
 resources:
   containers:
-  - container: wpilib2020
-    image: wpilib/roborio-cross-ubuntu:2020-18.04
+  - container: wpilib2021
+    image: wpilib/roborio-cross-ubuntu:2021-18.04
   - container: raspbian
     image:  wpilib/raspbian-cross-ubuntu:10-18.04
   - container: bionic
@@ -27,7 +27,7 @@ stages:
     pool:
       vmImage: 'Ubuntu 16.04'
 
-    container: wpilib2020
+    container: wpilib2021
 
     steps:
       - checkout: self
