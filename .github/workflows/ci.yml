@@ -88,11 +88,13 @@ jobs:
       - name: Publish
         run: cd combiner && ./gradlew publish -Pthirdparty
         env:
+          RUN_AZURE_ARTIFACTORY_RELEASE: "TRUE"
           ARTIFACTORY_PUBLISH_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
           ARTIFACTORY_PUBLISH_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
       - name: Publish Release
         run: cd combiner && ./gradlew publish -Pthirdparty -PreleaseRepoPublish
         env:
+          RUN_AZURE_ARTIFACTORY_RELEASE: "TRUE"
           ARTIFACTORY_PUBLISH_USERNAME: ${{ secrets.ARTIFACTORY_USERNAME }}
           ARTIFACTORY_PUBLISH_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
       - uses: actions/upload-artifact@v2
