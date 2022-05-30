@@ -28,7 +28,9 @@ jobs:
         with:
           submodules: true
       - name: Fetch all history and metadata
-        run: git fetch --prune --unshallow
+        run: |
+          git config --global --add safe.directory /__w/thirdparty-googletest/thirdparty-googletest
+          git fetch --prune --unshallow
       - name: Build with Gradle
         run: ./gradlew build --max-workers 1 ${{ matrix.build-options }}
       - uses: actions/upload-artifact@v2
