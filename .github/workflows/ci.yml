@@ -8,16 +8,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - container: wpilib/roborio-cross-ubuntu:2022-18.04
+          - container: wpilib/roborio-cross-ubuntu:2022-20.04
             artifact-name: Athena
             build-options: "-Ponlylinuxathena"
-          - container: wpilib/raspbian-cross-ubuntu:10-18.04
+          - container: wpilib/raspbian-cross-ubuntu:10-20.04
             artifact-name: Raspbian
             build-options: "-Ponlylinuxraspbian"
-          - container: wpilib/aarch64-cross-ubuntu:bionic-18.04
+          - container: wpilib/aarch64-cross-ubuntu:bionic-20.04
             artifact-name: Aarch64
             build-options: "-Ponlylinuxaarch64bionic"
-          - container: wpilib/ubuntu-base:18.04
+          - container: wpilib/ubuntu-base:20.04
             artifact-name: Linux
             build-options: ""
     name: "Build - ${{ matrix.artifact-name }}"
@@ -28,7 +28,9 @@ jobs:
         with:
           submodules: true
       - name: Fetch all history and metadata
-        run: git fetch --prune --unshallow
+        run: |
+          git config --global --add safe.directory /__w/thirdparty-googletest/thirdparty-googletest
+          git fetch --prune --unshallow
       - name: Build with Gradle
         run: ./gradlew build --max-workers 1 ${{ matrix.build-options }}
       - uses: actions/upload-artifact@v2
@@ -41,12 +43,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: windows-latest
+          - os: windows-2019
             artifact-name: Win64
             architecture: x64
-          - os: windows-latest
-            artifact-name: Win32
-            architecture: x86
           - os: macos-latest
             artifact-name: macOS
             architecture: x64
