@@ -62,7 +62,7 @@ jobs:
           java-version: 11
           architecture: ${{ matrix.architecture }}
       - name: Build with Gradle
-        run: ./gradlew build
+        run: ./gradlew build -Pbuildalldesktop
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ matrix.artifact-name }}
