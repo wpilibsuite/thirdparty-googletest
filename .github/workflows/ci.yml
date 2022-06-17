@@ -12,11 +12,11 @@ jobs:
             artifact-name: Athena
             build-options: "-Ponlylinuxathena"
           - container: wpilib/raspbian-cross-ubuntu:10-20.04
-            artifact-name: Raspbian
-            build-options: "-Ponlylinuxraspbian"
+            artifact-name: Arm32
+            build-options: "-Ponlylinuxarm32"
           - container: wpilib/aarch64-cross-ubuntu:bionic-20.04
-            artifact-name: Aarch64
-            build-options: "-Ponlylinuxaarch64bionic"
+            artifact-name: Arm64
+            build-options: "-Ponlylinuxarm64"
           - container: wpilib/ubuntu-base:20.04
             artifact-name: Linux
             build-options: ""
