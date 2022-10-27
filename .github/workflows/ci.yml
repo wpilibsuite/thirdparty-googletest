@@ -49,7 +49,7 @@ jobs:
           - os: windows-2019
             artifact-name: Win32
             architecture: x86
-          - os: macos-latest
+          - os: macos-11
             artifact-name: macOS
             architecture: x64
     name: "Build - ${{ matrix.artifact-name }}"
