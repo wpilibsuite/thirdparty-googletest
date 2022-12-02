@@ -4,6 +4,12 @@ nativeUtils.addWpiNativeUtils()
 nativeUtils.withCrossRoboRIO()
 nativeUtils.withCrossLinuxArm32()
 nativeUtils.withCrossLinuxArm64()
+nativeUtils {
+  wpi {
+    configureDependencies {
+    }
+  }
+}
 
 nativeUtils.wpi.addWarnings()
 nativeUtils.wpi.addWarningsAsErrors()
