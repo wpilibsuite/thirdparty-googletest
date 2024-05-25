@@ -39,6 +39,8 @@ jobs:
           path: build/allOutputs
 
   build-host:
+    env:
+      MACOSX_DEPLOYMENT_TARGET: 11
     strategy:
       fail-fast: false
       matrix:
@@ -49,7 +51,7 @@ jobs:
           - os: windows-2019
             artifact-name: Win32
             architecture: x86
-          - os: macos-11
+          - os: macos-13
             artifact-name: macOS
             architecture: x64
     name: "Build - ${{ matrix.artifact-name }}"
